@@ -8,11 +8,19 @@ import './noise.js';
 		curtain: {
 			width: 1.5,
 			height: 2,
-			resolution: 100,
+			resolution: 200,
 			roughness: 1,
-			metalness: 0.11,
-			folds: 5,
-			foldDepth: 0.025,
+			metalness: 0.4,
+			folds: {
+				folds1: {
+					folds: 5,
+					foldDepth: 0.025,
+				},
+				folds2: {
+					folds: 8,
+					foldDepth: 0.01,
+				},
+			},
 		},
 		lights: {
 			ambient: {
@@ -132,15 +140,16 @@ import './noise.js';
 
 	scene.add(curtain, mainLight, ambientLight, secondaryLight);
 
-	const applySin = (mesh: THREE.Mesh, folds: number, foldDepth: number) => {
+	const applySin = (mesh: THREE.Mesh) => {
 		const geometry = mesh.geometry;
 		const positionAttribute = geometry.getAttribute('position');
 		const vertex = new THREE.Vector3();
+		const { folds1, folds2 } = config.curtain.folds;
 		for (let i = 0; i < positionAttribute.count; i++) {
 			vertex.fromBufferAttribute(positionAttribute, i);
 			const angle = Math.PI * (vertex.x * 2);
-			const wave1 = foldDepth * Math.sin(angle * folds);
-			const wave2 = 0.01 * Math.sin(angle * 8);
+			const wave1 = folds1.foldDepth * Math.sin(angle * folds1.folds);
+			const wave2 = folds2.foldDepth * Math.sin(angle * folds2.folds);
 			const wave = wave1 + wave2;
 			vertex.z = wave;
 			positionAttribute.setZ(i, vertex.z);
@@ -179,7 +188,7 @@ import './noise.js';
 		positionAttribute.needsUpdate = true;
 	};
 
-	applySin(curtain, config.curtain.folds, config.curtain.foldDepth);
+	applySin(curtain);
 	applyNoise(curtain, 0.05);
 	applyNoise(curtain, 0.01, 'xy');
 	applyNoise(curtain, 0.1, 'z');
@@ -197,20 +206,24 @@ import './noise.js';
 	const texture = await textureLoader.load('./fabric_pattern_07_col_1_1k.png');
 	texture.wrapS = THREE.RepeatWrapping;
 	texture.wrapT = THREE.RepeatWrapping;
+	texture.anisotropy = 16;
 
 	const roughMap = await textureLoader.load('./fabric_pattern_07_rough_1k.png');
 	roughMap.wrapS = THREE.RepeatWrapping;
 	roughMap.wrapT = THREE.RepeatWrapping;
+	roughMap.anisotropy = 16;
 
 	const normalMap = await textureLoader.load(
 		'./fabric_pattern_07_nor_gl_1k.png'
 	);
 	normalMap.wrapS = THREE.RepeatWrapping;
 	normalMap.wrapT = THREE.RepeatWrapping;
+	normalMap.anisotropy = 16;
 
 	const aoMap = await textureLoader.load('./fabric_pattern_07_ao_1k.png');
 	aoMap.wrapS = THREE.RepeatWrapping;
 	aoMap.wrapT = THREE.RepeatWrapping;
+	aoMap.anisotropy = 16;
 
 	const ratio = config.curtain.width / config.curtain.height;
 	const repeats = 3;
@@ -222,6 +235,9 @@ import './noise.js';
 	curtain.material.roughness = config.curtain.roughness;
 	curtain.material.metalness = config.curtain.metalness;
 	curtain.material.reflectivity = 0;
+	curtain.material.sheen = 0.1;
+	curtain.material.sheenRoughness = 0.25;
+	curtain.material.sheenColor = new THREE.Color(0xf2dbdc);
 	curtainFolder.add(curtain.material, 'roughness', 0, 1);
 	curtainFolder.add(curtain.material, 'metalness', 0, 1);
 
