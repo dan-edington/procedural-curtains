@@ -1,0 +1,14 @@
+{
+	"scripts": {
+		"dev": "esbuild --bundle --serve --servedir=public --outdir=public/js src/index.ts"
+	},
+	"devDependencies": {
+		"esbuild": "^0.14.32"
+	},
+	"dependencies": {
+		"@types/dat.gui": "^0.7.7",
+		"@types/three": "^0.139.0",
+		"dat.gui": "^0.7.9",
+		"three": "^0.139.2"
+	}
+}
