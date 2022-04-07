@@ -11,6 +11,9 @@ import './noise.js';
 			resolution: 200,
 			roughness: 1,
 			metalness: 0.4,
+			sheen: 0.1,
+			sheenRoughness: 0.5,
+			sheenColor: 0xffffff,
 			folds: {
 				folds1: {
 					folds: 5,
@@ -104,8 +107,8 @@ import './noise.js';
 		l.mainLight.position.y,
 		l.mainLight.position.z
 	);
-	const mainLightHelper = new THREE.PointLightHelper(mainLight);
-	scene.add(mainLightHelper);
+	// const mainLightHelper = new THREE.PointLightHelper(mainLight);
+	// scene.add(mainLightHelper);
 	mainLight.castShadow = true;
 	mainLight.shadow.bias = -0.001;
 
@@ -118,8 +121,8 @@ import './noise.js';
 		l.secondaryLight.position.y,
 		l.secondaryLight.position.z
 	);
-	const secondaryLightHelper = new THREE.PointLightHelper(secondaryLight);
-	scene.add(secondaryLightHelper);
+	// const secondaryLightHelper = new THREE.PointLightHelper(secondaryLight);
+	// scene.add(secondaryLightHelper);
 	secondaryLight.castShadow = true;
 	secondaryLight.shadow.bias = -0.001;
 
@@ -189,7 +192,7 @@ import './noise.js';
 	};
 
 	applySin(curtain);
-	applyNoise(curtain, 0.05);
+	applyNoise(curtain, 0.0075);
 	applyNoise(curtain, 0.01, 'xy');
 	applyNoise(curtain, 0.1, 'z');
 
@@ -234,12 +237,13 @@ import './noise.js';
 	curtain.material.roughnessMap = roughMap;
 	curtain.material.roughness = config.curtain.roughness;
 	curtain.material.metalness = config.curtain.metalness;
-	curtain.material.reflectivity = 0;
-	curtain.material.sheen = 0.1;
-	curtain.material.sheenRoughness = 0.25;
-	curtain.material.sheenColor = new THREE.Color(0xf2dbdc);
+	curtain.material.sheen = config.curtain.sheen;
+	curtain.material.sheenRoughness = config.curtain.sheenRoughness;
+	curtain.material.sheenColor = new THREE.Color(config.curtain.sheenColor);
 	curtainFolder.add(curtain.material, 'roughness', 0, 1);
 	curtainFolder.add(curtain.material, 'metalness', 0, 1);
+	curtainFolder.add(curtain.material, 'sheen', 0, 1);
+	curtainFolder.add(curtain.material, 'sheenRoughness', 0, 1);
 
 	render();
 })();
