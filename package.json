@@ -1,6 +1,7 @@
 {
 	"scripts": {
-		"dev": "esbuild --bundle --serve --servedir=public --outdir=public/js src/index.ts"
+		"dev": "esbuild --bundle --serve --servedir=public --outdir=public/js src/index.ts",
+		"build": "esbuild --bundle --outfile=public/js/index.js src/index.ts"
 	},
 	"devDependencies": {
 		"esbuild": "^0.14.32"
